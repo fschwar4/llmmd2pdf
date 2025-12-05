@@ -20,5 +20,6 @@ env/
 .idea/
 
 # Distribution / Packaging
+dist/
 *.egg-info/
 *.egg
