@@ -42,6 +42,8 @@ def save_config(models_list, human_author):
     except Exception as e:
         print(f"Error saving config: {e}")
 
+import re
+
 def preprocess_markdown(text):
     """
     Cleans up the markdown text based on specific rules:
@@ -51,29 +53,20 @@ def preprocess_markdown(text):
     3. Remove lines starting with '![profile picture]'
     4. Remove lines containing '{{@CAPTURE_ARTIFACT_CONTENT:undefined}}'
     5. Clean 'Exported on...' lines to remove SaveYourChat branding.
+    6. Remove lines that are exclusively "Tools".
+    7. Remove lines that are exclusively "Show Thinking".
+    8. Remove the standard Gemini privacy footer/disclaimer.
     """
     
     # Rule 1: Gemini Wrapper Block Cleanup
-    # Matches a block starting with "## Gemini" and ending with "Update location"
-    # Extract only the relevant metadata lines from inside this block.
     def gemini_block_cleaner(match):
         content = match.group(0)
-        
-        # Extract "Gemini Apps Activity is ..."
         activity_match = re.search(r"(Gemini Apps Activity is (?:on|off))", content, re.IGNORECASE)
         activity_line = activity_match.group(1) if activity_match else ""
-        
-        # Extract location line (ends with "Update location")
-        # We look for the specific line in the content that ends with the marker
         location_match = re.search(r"(^.*Update location$)", content, re.MULTILINE)
         location_line = location_match.group(1) if location_match else ""
-        
-        # Return cleaned block (only the two extracted lines)
         return f"{activity_line}  \n{location_line}"
 
-    # Apply regex on the full text
-    # flags=re.DOTALL allows .*? to match across newlines
-    # flags=re.MULTILINE allows ^ and $ to match start/end of lines
     text = re.sub(
         r"^## Gemini.*?Update location$", 
         gemini_block_cleaner, 
@@ -82,7 +75,6 @@ def preprocess_markdown(text):
     )
 
     # Rule 2: Fix spacing between horizontal rule and bold text
-    # If "---" is immediately followed by "**" on the next line, insert an empty line.
     text = re.sub(r'^---\n\*\*', r'---\n\n**', text, flags=re.MULTILINE)
 
     lines = text.splitlines()
@@ -99,11 +91,23 @@ def preprocess_markdown(text):
         if "{{@CAPTURE_ARTIFACT_CONTENT:undefined}}" in line:
             continue
 
-        # Rule 5: Remove '[Turn it on here...]' lines (Redundant if caught by Rule 1, but safe to keep)
+        # Rule 5: Remove redundant '[Turn it on here...]' lines
         if stripped.startswith("[Turn it on here Opens in a new window]"):
             continue
+
+        # Rule 6 - 8: Remove lines exclusively containing "Tools", "Show thinking", or "Fast"
+        if stripped in ["Tools", "Show thinking", "Fast"]:
+            continue
+
+        # Rule 9: Remove Gemini Privacy Footer
+        # Checks if the line starts with the standard disclaimer text. 
+        # This is robust against minor URL changes while targeting the correct line.
+        if stripped.startswith("Gemini can make mistakes, including about people"):
+            continue
             
-        # Rule 6: Clean Exported on... lines
+        # -----------------------------
+
+        # Rule 9 (Previously 6): Clean Exported on... lines
         if " - with [SaveYourChat" in line:
             line = re.sub(r'\s+-\s+with\s+\[SaveYourChat\].*?$', '', line)
             line = re.sub(r'\[([^\]]+)\]\([^\)]+\)', r'\1', line)
