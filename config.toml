@@ -1,2 +1,17 @@
-models = [ "Claude Haiku 4.5", "Claude Opus 4.5", "Claude Sonnet 4.5", "GPT-4o", "GPT-4o mini", "GPT-5", "GPT-5.1", "Gemini 3 Pro",]
-author = "Ferdinand Huber"
+models = [
+    # OpenAI
+    "GPT-4o",
+    "GPT-4o mini",
+    "GPT-5.1",
+    "GPT-5",
+    
+    # Google
+    "Gemini 3 Pro",
+    
+    # Anthropic
+    "Claude Sonnet 4.5",
+    "Claude Haiku 4.5",
+    "Claude Opus 4.5"
+]
+author = "Karl Dafoe"
+port = 5555

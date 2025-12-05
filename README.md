@@ -52,10 +52,11 @@ The application stores settings in the standard Application Support folder for y
 * **Linux**: \~/.config/llmmd2pdf/config.toml
 
 This file is automatically created when you run the app. You can modify it to set default models, your name, or the **server port**.  
-**Example Config:**  
-models \= \["ChatGPT 5.1", "Gemini 3 Pro", "Sonnet 4.5", "Opus 4.5"\]  
+
+**Default Config:**  
+models \= \[ "Claude Haiku 4.5", "Claude Opus 4.5", "Claude Sonnet 4.5", "GPT-4o", "GPT-4o mini", "GPT-5", "GPT-5.1", "Gemini 3 Pro"\]  
 author \= "Karl Dafoe"  
-port \= 8000  \# Change this to run on a different port
+port \= 5555  \# Change this to run on a different port
 
 ### **Changing the Port**
 
