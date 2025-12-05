@@ -1,0 +1,62 @@
+# **Markdown to PDF Converter (llmmd2pdf)**
+
+A local Python application built with [Shiny for Python](https://shiny.posit.co/py/) that allows you to paste Markdown text, preprocess it (specifically optimized for Gemini/LLM exports), and convert it to PDF using [Quarto](https://quarto.org/).
+
+## **Features**
+
+* **GUI Interface**: Clean Shiny layout for text input and settings.  
+* **Smart Preprocessing**: Cleans "Gemini Apps Activity" footers, removes profile placeholders, and cleans artifact tags.  
+* **Native Directory Picker**: Robustly handles native macOS file dialogs via a subprocess.  
+* **Quarto Integration**: High-quality PDF conversion.  
+* **Metadata & Config**: Autosaves your favorite models, author name, and stores them in the standard OS configuration path.
+
+## **Prerequisites**
+
+1. **Python 3.9+**  
+2. **Quarto CLI**: Required for PDF generation.  
+   * [Download Quarto](https://quarto.org/docs/get-started/)  
+   * Verify: quarto \--version
+
+## **Option 1: Installation via PyPI (Recommended)**
+
+This is the easiest way to use the tool.
+
+1. **Install the package**:  
+   pip install llmmd2pdf
+
+2. **Run the app**:  
+   llmmd2pdf
+
+   The app will open in your browser automatically.
+
+## **Option 2: Installation from Source (GitHub)**
+
+Use this if you want to modify the code or contribute.
+
+1. **Clone the repository**:  
+   git clone \[https://github.com/yourusername/llmmd2pdf.git\](https://github.com/yourusername/llmmd2pdf.git)  
+   cd llmmd2pdf
+
+2. **Install in editable mode**:  
+   pip install \-e .
+
+3. **Run the app**:  
+   llmmd2pdf
+
+## **Configuration**
+
+The application stores settings in the standard Application Support folder for your OS.
+
+* **macOS**: \~/Library/Application Support/llmmd2pdf/config.toml  
+* **Windows**: %APPDATA%/llmmd2pdf/config.toml  
+* **Linux**: \~/.config/llmmd2pdf/config.toml
+
+This file is automatically created when you run the app. You can modify it to set default models, your name, or the **server port**.  
+**Example Config:**  
+models \= \["ChatGPT 5.1", "Gemini 3 Pro", "Sonnet 4.5", "Opus 4.5"\]  
+author \= "Karl Dafoe"  
+port \= 8000  \# Change this to run on a different port
+
+### **Changing the Port**
+
+You can change the port by editing the port value in the config file above. The next time you run llmmd2pdf, it will bind to that port.
