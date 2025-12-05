@@ -67,6 +67,6 @@ You can change the port by editing the port value in the config file above. The 
 
 ## Roadmap
 
-- [ ] Add Testing
+- [x] Add unit tests for preprocessing functions
 - [ ] maybe add API-based direct fetching of conversations
 - [ ] Improve Quarto template customization options
