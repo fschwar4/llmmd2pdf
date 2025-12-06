@@ -1,0 +1,7 @@
+![Diagram](https://example.com/chart?id=123&.jpg)
+![Diagram](https://example.com/chart.png)
+![Photo](https://example.com/photo.JPEG)
+![SVG Image](https://example.com/graphic.svg)
+![Vector Graphic](https://example.com/vector.GIF)
+![No Extension](https://example.com/image&.jpg)
+![Image of molecular mimicry in Guillain-Barre syndrome](https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcQzYZyk68ZeP7cl2uie6ZiJyLmPNKi2ZXoRSao93cYRcVoebJrZVdX4RBa5_3FW8defwpsGelvaKVe1LO9UFCri-mvdZxBupaV1Hvo3QYjWWVXRBsY&.jpg)

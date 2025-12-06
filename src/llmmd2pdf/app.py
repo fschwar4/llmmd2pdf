@@ -42,20 +42,19 @@ def save_config(models_list, human_author):
     except Exception as e:
         print(f"Error saving config: {e}")
 
-import re
 
 def preprocess_markdown(text):
     """
     Cleans up the markdown text based on specific rules:
-    1. Gemini Wrapper Cleanup: Collapses the block from '## Gemini' to 'Update location'
-       keeping only the Activity Status and Location.
-    2. Add empty line between horizontal rule '---' and bold text '**' if they are adjacent.
-    3. Remove lines starting with '![profile picture]'
-    4. Remove lines containing '{{@CAPTURE_ARTIFACT_CONTENT:undefined}}'
-    5. Clean 'Exported on...' lines to remove SaveYourChat branding.
-    6. Remove lines that are exclusively "Tools".
-    7. Remove lines that are exclusively "Show Thinking".
-    8. Remove the standard Gemini privacy footer/disclaimer.
+    1. Gemini Wrapper Cleanup: Collapses the block from '## Gemini' to 'Update location'.
+    2. Add empty line between horizontal rule '---' and bold text '**'.
+    3. [NEW] Fix Image Extensions: Appends '&.jpg' to https image URLs lacking a file extension.
+    4. Remove lines starting with '![profile picture]'
+    5. Remove lines containing '{{@CAPTURE_ARTIFACT_CONTENT:undefined}}'
+    6. Clean 'Exported on...' lines to remove SaveYourChat branding.
+    7. Remove lines that are exclusively "Tools".
+    8. Remove lines that are exclusively "Show Thinking".
+    9. Remove the standard Gemini privacy footer/disclaimer.
     """
     
     # Rule 1: Gemini Wrapper Block Cleanup
@@ -77,37 +76,53 @@ def preprocess_markdown(text):
     # Rule 2: Fix spacing between horizontal rule and bold text
     text = re.sub(r'^---\n\*\*', r'---\n\n**', text, flags=re.MULTILINE)
 
+    # -----------------------------
+    # Rule 3: Fix Image Extensions (The requested addition)
+    # -----------------------------
+    def append_jpg_extension(match):
+        alt_text = match.group(1)
+        url = match.group(2)
+        
+        # List of common extensions to check against
+        valid_extensions = ('.png', '.jpeg', '.jpg', '.svg', '.gif', '.webp')
+        
+        # If the URL does NOT end with a valid extension, append &.jpg
+        if not url.lower().endswith(valid_extensions):
+            url += "&.jpg"
+            
+        return f"![{alt_text}]({url})"
+
+    # Regex finds: ![alt](https://...)
+    text = re.sub(r'!\[(.*?)\]\((https://[^\)]+)\)', append_jpg_extension, text)
+    # -----------------------------
+
     lines = text.splitlines()
     cleaned_lines = []
     
     for line in lines:
         stripped = line.strip()
         
-        # Rule 3: Remove profile picture lines
+        # Rule 4: Remove profile picture lines
         if stripped.startswith("![profile picture]"):
             continue
 
-        # Rule 4: Remove capture artifact undefined lines
+        # Rule 5: Remove capture artifact undefined lines
         if "{{@CAPTURE_ARTIFACT_CONTENT:undefined}}" in line:
             continue
 
-        # Rule 5: Remove redundant '[Turn it on here...]' lines
+        # Rule 6: Remove redundant '[Turn it on here...]' lines
         if stripped.startswith("[Turn it on here Opens in a new window]"):
             continue
 
-        # Rule 6 - 8: Remove lines exclusively containing "Tools", "Show thinking", or "Fast"
+        # Rule 7 - 9: Remove lines exclusively containing "Tools", "Show thinking", or "Fast"
         if stripped in ["Tools", "Show thinking", "Fast"]:
             continue
 
-        # Rule 9: Remove Gemini Privacy Footer
-        # Checks if the line starts with the standard disclaimer text. 
-        # This is robust against minor URL changes while targeting the correct line.
+        # Rule 10: Remove Gemini Privacy Footer
         if stripped.startswith("Gemini can make mistakes, including about people"):
             continue
             
-        # -----------------------------
-
-        # Rule 9 (Previously 6): Clean Exported on... lines
+        # Rule 11: Clean Exported on... lines
         if " - with [SaveYourChat" in line:
             line = re.sub(r'\s+-\s+with\s+\[SaveYourChat\].*?$', '', line)
             line = re.sub(r'\[([^\]]+)\]\([^\)]+\)', r'\1', line)
