@@ -45,3 +45,7 @@ Your preferences (Author name, Port, Custom Models) are saved automatically in a
 | **Linux** | \~/.config/llmmd2pdf/config.toml |
 
 You can edit this file manually to change the default port or clean up the model list.
+
+## **Development Notes**
+
+Please refer to the [Development Reminders](./development.md) for guidelines on building new releases, local module testing, and other development tasks.
